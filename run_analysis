@@ -8,7 +8,6 @@ test<-read.table("X_test.txt")
 data <- rbind(train, test)
 
 
-
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
 
 # read the measurements names into the (info) variable
@@ -43,6 +42,7 @@ x<-merge(nrow,actlev,by.x="V1",by.y="V1",all=TRUE,sort=FALSE)
 
 # create the variable (activity) in the data set and assigne the name of each activity
 data$activity<-x[,2]
+
 
 # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
