@@ -1,0 +1,62 @@
+# 1. Merges the training and the test sets to create one data set.
+
+# read the train and testing data sets
+train<-read.table("X_train.txt")
+test<-read.table("X_test.txt")
+
+# merge the training and test data sets into a variabe called (data)
+data <- rbind(train, test)
+
+
+
+# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+
+# read the measurements names into the (info) variable
+info<-read.table("features.txt")
+
+# asssign the measurements names to the data names
+colnames(data)<-info[,2]
+
+# find the mean and the std names 
+ndata1<-data[,grep("mean()",names(data),fixed=TRUE)]
+ndata2<-data[,grep("std()",names(data),fixed=TRUE)]
+
+# create (ndata) with only the mean and standard deviation of each measurment
+ndata<-cbind(ndata1,ndata2)
+
+
+# 3. Uses descriptive activity names to name the activities in the data set
+
+# read the activity levels and assign to (actlev) variable
+actlev<-read.table("activity_labels.txt")
+
+
+# 4. Appropriately labels the data set with descriptive variable names. 
+
+# read the code of the activity of each row and assign to (nrow) variable
+nrowt<-read.table("y_train.txt")
+nrows<-read.table("y_test.txt")
+nrow<-rbind(nrowt,nrows)
+
+# assign the name of the activity to each row according to their respective code
+x<-merge(nrow,actlev,by.x="V1",by.y="V1",all=TRUE,sort=FALSE)
+
+# create the variable (activity) in the data set and assigne the name of each activity
+data$activity<-x[,2]
+
+# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+#read the subject code of each row
+subtrain<-read.table("subject_train.txt")
+subtest<-read.table("subject_test.txt")
+subj<-rbind(subtrain,subtest)
+
+# create the variable (subject) in the data set and assign the respective subject
+data$subject<-subj[,1]
+
+# create the independet tidy data set(tdata) with the average of each variable for each activity and each subject
+library(plyr)
+tdata<-aggregate(. ~subject + activity, data, mean)
+
+# create the (tdata.txt) file from the tidy data set
+write.table(tdata,file="tdata.txt",row.name=FALSE)
